@@ -1,0 +1,4 @@
+AMFI codes check
+fund_master: 40 codes
+nav_history: 40 codes
+all master codes found in nav_history - ok
