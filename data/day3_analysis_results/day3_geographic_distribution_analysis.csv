@@ -1,0 +1,21 @@
+state,city_tier,total_amount
+Delhi,T30,289633404.0
+Gujarat,T30,298358940.0
+Haryana,B30,148078011.0
+Haryana,T30,131556343.0
+Karnataka,B30,141261335.0
+Karnataka,T30,132492235.0
+Madhya Pradesh,B30,165606495.0
+Madhya Pradesh,T30,142705998.0
+Maharashtra,B30,80566781.0
+Maharashtra,T30,188946699.0
+Punjab,B30,159315652.0
+Punjab,T30,156464807.0
+Rajasthan,B30,144877125.0
+Rajasthan,T30,153768697.0
+Tamil Nadu,B30,170345165.0
+Tamil Nadu,T30,144832072.0
+Telangana,T30,290219284.0
+Uttar Pradesh,B30,192275076.0
+Uttar Pradesh,T30,93093797.0
+West Bengal,T30,297182514.0
