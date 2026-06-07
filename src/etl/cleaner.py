@@ -20,13 +20,15 @@ class DataCleaner:
         """Cleans and forward-fills the NAV history dataset."""
         print("Cleaning NAV History...")
         df = pd.read_csv(os.path.join(INPUT_DIR, '02_nav_history.csv'))
-        df['date'] = pd.to_datetime(df['date'])
+        df['date'] = pd.to_datetime(df['date'], dayfirst=True, errors='coerce')
+        df = df.dropna(subset=['date'])
         
         df = df.drop_duplicates(subset=['amfi_code', 'date'])
         df = df[df['nav'] > 0]
         df = df.sort_values(['amfi_code', 'date'])
 
         def _fill_missing_dates(group):
+            if group.empty: return group
             date_range = pd.date_range(start=group['date'].min(), end=group['date'].max(), freq='D')
             group = group.set_index('date').reindex(date_range)
             group['nav'] = group['nav'].ffill()
@@ -41,7 +43,8 @@ class DataCleaner:
         """Standardizes investor transactions and validates KYC status."""
         print("Cleaning Investor Transactions...")
         df = pd.read_csv(os.path.join(INPUT_DIR, '08_investor_transactions.csv'))
-        df['transaction_date'] = pd.to_datetime(df['transaction_date'])
+        df['transaction_date'] = pd.to_datetime(df['transaction_date'], dayfirst=True, errors='coerce')
+        df = df.dropna(subset=['transaction_date'])
         
         type_mapping = {
             'SIP': 'SIP', 
@@ -83,9 +86,17 @@ class DataCleaner:
                 
             df = pd.read_csv(file_path)
             df['date'] = pd.to_datetime(df['date'], dayfirst=True, errors='coerce')
+            df = df.dropna(subset=['date'])
+            
+            if df.empty:
+                print(f"Warning: No valid data found for {name}")
+                continue
+
             df = df.drop_duplicates(subset=['date']).sort_values('date')
             df = df[df['nav'] > 0]
             
+            if df.empty: continue
+
             # Reindex to fill missing dates
             date_range = pd.date_range(start=df['date'].min(), end=df['date'].max(), freq='D')
             df = df.set_index('date').reindex(date_range)
