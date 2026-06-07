@@ -7,9 +7,14 @@ class DataAnalyzer:
     """Handles data extraction and analytical processing from the SQLite database."""
 
     def __init__(self):
-        self.engine = create_engine(f'sqlite:///{DB_PATH}')
+        self.db_path = DB_PATH
         if not os.path.exists(ANALYSIS_RESULTS_DIR):
             os.makedirs(ANALYSIS_RESULTS_DIR)
+
+    @property
+    def engine(self):
+        """Lazy initialization of the SQLAlchemy engine."""
+        return create_engine(f'sqlite:///{self.db_path}')
 
     def save_analysis(self, df: pd.DataFrame, filename: str):
         """Saves analysis results to the specified output directory."""
@@ -79,10 +84,21 @@ class DataAnalyzer:
 
     def extract_sector_allocation(self):
         print("Extracting Sector Allocation Data...")
-        path = os.path.join(PROCESSED_DAY2_DIR, 'day2_09_portfolio_holdings_cleaning.csv')
-        df = pd.read_csv(path)
-        summary = df.groupby('sector')['weight_pct'].sum().reset_index().sort_values('weight_pct', ascending=False)
-        self.save_analysis(summary, 'sector_allocation_analysis')
+        query = "SELECT sector, SUM(weight_pct) as total_weight FROM fact_portfolio_holdings GROUP BY sector ORDER BY total_weight DESC"
+        df = pd.read_sql(query, self.engine)
+        self.save_analysis(df, 'sector_allocation_analysis')
+
+    def extract_folio_metrics(self):
+        print("Extracting Detailed Folio Metrics...")
+        query = "SELECT * FROM fact_folio_count"
+        df = pd.read_sql(query, self.engine)
+        self.save_analysis(df, 'folio_metrics_analysis')
+        
+    def extract_benchmark_data(self):
+        print("Extracting Benchmark Index Data...")
+        query = "SELECT * FROM fact_benchmark_indices"
+        df = pd.read_sql(query, self.engine)
+        self.save_analysis(df, 'benchmark_indices_analysis')
 
     def extract_returns_correlation(self):
         print("Extracting Returns Correlation Matrix...")
@@ -104,7 +120,8 @@ class DataAnalyzer:
         self.extract_category_inflows()
         self.extract_investor_demographics()
         self.extract_geographic_distribution()
-        self.extract_folio_growth()
         self.extract_sector_allocation()
+        self.extract_folio_metrics()
+        self.extract_benchmark_data()
         self.extract_returns_correlation()
         print("\n--- All Analytical Tasks Completed ---")

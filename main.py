@@ -1,22 +1,29 @@
 import sys
 from src.etl.cleaner import DataCleaner
+from src.etl.loader import DataLoader
 from src.etl.analyzer import DataAnalyzer
 
 def main():
     """
     Main entry point for the Bluestock Fintech Data Pipeline.
-    Orchestrates the cleaning and analytical extraction processes.
+    Orchestrates the cleaning, loading, and analytical extraction processes.
     """
     print("=== Bluestock Fintech Data Pipeline Starting ===\n")
 
     try:
-        # Step 1: Initialize and run Data Cleaner
+        # Step 1: Data Cleaning
         cleaner = DataCleaner()
         cleaner.run_all()
 
         print("\n" + "="*50 + "\n")
 
-        # Step 2: Initialize and run Data Analyzer
+        # Step 2: Database Loading
+        loader = DataLoader()
+        loader.run_all()
+
+        print("\n" + "="*50 + "\n")
+
+        # Step 3: Analytical Extraction
         analyzer = DataAnalyzer()
         analyzer.run_all()
 

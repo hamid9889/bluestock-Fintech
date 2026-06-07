@@ -76,3 +76,41 @@ CREATE TABLE IF NOT EXISTS fact_aum (
     date TEXT,
     FOREIGN KEY (date) REFERENCES dim_date(date)
 );
+
+CREATE TABLE IF NOT EXISTS fact_category_inflows (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category TEXT,
+    month TEXT,
+    net_inflow_crore REAL
+);
+
+CREATE TABLE IF NOT EXISTS fact_folio_count (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    month TEXT,
+    total_folios_crore REAL,
+    equity_folios_crore REAL,
+    debt_folios_crore REAL,
+    hybrid_folios_crore REAL,
+    others_folios_crore REAL
+);
+
+CREATE TABLE IF NOT EXISTS fact_portfolio_holdings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    amfi_code INTEGER,
+    stock_symbol TEXT,
+    stock_name TEXT,
+    sector TEXT,
+    weight_pct REAL,
+    market_value_cr REAL,
+    current_price_inr REAL,
+    portfolio_date TEXT,
+    FOREIGN KEY (amfi_code) REFERENCES dim_fund(amfi_code)
+);
+
+CREATE TABLE IF NOT EXISTS fact_benchmark_indices (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TEXT,
+    index_name TEXT,
+    close_value REAL,
+    FOREIGN KEY (date) REFERENCES dim_date(date)
+);
