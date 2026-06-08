@@ -7,7 +7,7 @@ def run_notebook(notebook_path):
     print(f"Executing: {notebook_path}")
     try:
         subprocess.run([
-            "jupyter", "nbconvert", "--to", "notebook", "--execute", 
+            "python", "-m", "jupyter", "nbconvert", "--to", "notebook", "--execute", 
             "--inplace", notebook_path
         ], check=True)
         print(f"Successfully finished: {notebook_path}")
